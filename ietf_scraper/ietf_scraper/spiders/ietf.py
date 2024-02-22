@@ -1,15 +1,18 @@
 import scrapy
-from ..items import AmazonItem
 
-class IetfSpider(scrapy.Spider):
-    name = "ietf"
-    allowed_domains = ["pythonscraping.com"]
-    start_urls = ["https://www.amazon.com/s?k=desk&crid=3045GGLV5NKMN&sprefix=desk%2Caps%2C118&ref=nb_sb_noss_1"]
+class ietfgit (scrapy.Spider):
+    name = 'reddit_comments'
+    start_urls = ['https://www.reddit.com/r/subreddit_name/comments/post_id/']
 
     def parse(self, response):
-        items = AmazonItem()
-        product_name = response.css('')
-        
-        
-      
-        
+        # Extract comments using XPath
+        comments = response.xpath('//div[contains(@class, "Comment")]//p[@class="Comment__body"]//text()').extract()
+
+        # Print or process the extracted comments
+        for comment in comments:
+            print(comment.strip())
+
+        # Follow links to next pages if available
+        next_page = response.css('a[rel="nofollow next"]::attr(href)').extract_first()
+        if next_page:
+            yield scrapy.Request(url=next_page, callback=self.parse)
