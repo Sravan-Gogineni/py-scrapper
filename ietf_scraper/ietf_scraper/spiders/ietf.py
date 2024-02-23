@@ -1,18 +1,32 @@
 import scrapy
+import csv
+import os
 
-class ietfgit (scrapy.Spider):
-    name = 'reddit_comments'
-    start_urls = ['https://www.reddit.com/r/subreddit_name/comments/post_id/']
+class AmazonMobileSpider(scrapy.Spider):
+    name = 'amazon_mobiles'
+    allowed_domains = ['amazon.com']
+    start_urls = ['https://www.amazon.com/s?k=mobile']
 
     def parse(self, response):
-        # Extract comments using XPath
-        comments = response.xpath('//div[contains(@class, "Comment")]//p[@class="Comment__body"]//text()').extract()
+        mobile_names = response.css('.s-title-instructions h2 a::text').extract()
 
-        # Print or process the extracted comments
-        for comment in comments:
-            print(comment.strip())
+        for mobile_name in mobile_names:
+            yield {
+                'mobile_name': mobile_name
+            }
 
-        # Follow links to next pages if available
-        next_page = response.css('a[rel="nofollow next"]::attr(href)').extract_first()
+        next_page = response.css('.s-pagination-next::attr(href)').extract_first()
         if next_page:
             yield scrapy.Request(url=next_page, callback=self.parse)
+
+        
+        csv_file_path = os.path.join('spiders', 'mobiles.csv')
+        with open(csv_file_path, 'a', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['mobile_name']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            if response.url == self.start_urls[0]:
+                writer.writeheader()
+
+            for mobile_name in mobile_names:
+                writer.writerow({'mobile_name': mobile_name})
