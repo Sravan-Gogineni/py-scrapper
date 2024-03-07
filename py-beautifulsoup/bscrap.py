@@ -44,7 +44,3 @@ result_df.to_csv('MOBILE.csv')
 
 
 
-
-
-#df5.columns = ['Mobile_Name', 'Mobile_Rating','Mobile_Price']
-#df5.to_csv("MOBILE.csv")
