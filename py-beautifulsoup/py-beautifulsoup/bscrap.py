@@ -17,7 +17,7 @@ mobilereview= []
 
 counter = 0
 
-min_length = min(len(mobile_name), len(mobe_rating),len(mobile_price),len(mobile_reviews))
+min_length = min(len(mobile_name), len(mobile_rating),len(mobile_price),len(mobile_reviews))
 
 for i in range(min_length):
     mobiles.append(mobile_name[i].get_text())
